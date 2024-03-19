@@ -1,0 +1,810 @@
+﻿Program.Sub.ScreenSU.Start
+Gui.Form..Create(BaseForm)
+Gui.Form..Caption("Dashboard")
+Gui.Form..Size(1031,566)
+Gui.Form..MinX(0)
+Gui.Form..MinY(0)
+Gui.Form..Position(0,0)
+Gui.Form..AlwaysOnTop(False)
+Gui.Form..FontName("Tahoma")
+Gui.Form..FontSize(8.25)
+Gui.Form..ControlBox(True)
+Gui.Form..MaxButton(True)
+Gui.Form..MinButton(True)
+Gui.Form..MousePointer(0)
+Gui.Form..Moveable(True)
+Gui.Form..Sizeable(True)
+Gui.Form..ShowInTaskBar(True)
+Gui.Form..TitleBar(True)
+Gui.Form..Event(UnLoad,Form_UnLoad)
+Gui.Form.GsGcCosts.Create(GsGridControl)
+Gui.Form.GsGcCosts.Enabled(True)
+Gui.Form.GsGcCosts.Visible(True)
+Gui.Form.GsGcCosts.Zorder(0)
+Gui.Form.GsGcCosts.Size(315,59)
+Gui.Form.GsGcCosts.Position(706,2)
+Gui.Form.GsGcCosts.Anchor(9)
+Gui.Form.GsGcDisplay.Create(GsGridControl)
+Gui.Form.GsGcDisplay.Enabled(True)
+Gui.Form.GsGcDisplay.Visible(True)
+Gui.Form.GsGcDisplay.Zorder(0)
+Gui.Form.GsGcDisplay.Size(1018,463)
+Gui.Form.GsGcDisplay.Position(8,68)
+Gui.Form.GsGcDisplay.Anchor(15)
+Gui.Form.frame1.Create(Frame)
+Gui.Form.frame1.Enabled(True)
+Gui.Form.frame1.Visible(True)
+Gui.Form.frame1.Zorder(0)
+Gui.Form.frame1.Size(696,57)
+Gui.Form.frame1.Position(5,5)
+Gui.Form.frame1.Caption("")
+Gui.Form.frame1.FontName("Tahoma")
+Gui.Form.frame1.FontSize(8.25)
+Gui.Form.frame1.Anchor(13)
+Gui.Form.dtp1.Create(DatePicker)
+Gui.Form.dtp1.Enabled(True)
+Gui.Form.dtp1.Visible(True)
+Gui.Form.dtp1.Zorder(0)
+Gui.Form.dtp1.Size(100,20)
+Gui.Form.dtp1.Position(7,19)
+Gui.Form.dtp1.CheckBox(False)
+Gui.Form.dtp1.FontName("Tahoma")
+Gui.Form.dtp1.FontSize(8.25)
+Gui.Form.dtp1.Parent("frame1")
+Gui.Form.dtp2.Create(DatePicker)
+Gui.Form.dtp2.Enabled(True)
+Gui.Form.dtp2.Visible(True)
+Gui.Form.dtp2.Zorder(0)
+Gui.Form.dtp2.Size(100,20)
+Gui.Form.dtp2.Position(115,18)
+Gui.Form.dtp2.CheckBox(False)
+Gui.Form.dtp2.FontName("Tahoma")
+Gui.Form.dtp2.FontSize(8.25)
+Gui.Form.dtp2.Parent("frame1")
+Gui.Form.lbl1.Create(Label,"From",True,24,13,0,9,2,True,0,"Tahoma",8.25,,0,0)
+Gui.Form.lbl1.BorderStyle(0)
+Gui.Form.lbl1.Parent("frame1")
+Gui.Form.lbl2.Create(Label,"To",True,12,13,0,116,5,True,0,"Tahoma",8.25,,0,0)
+Gui.Form.lbl2.BorderStyle(0)
+Gui.Form.lbl2.Parent("frame1")
+Gui.Form.chkAllocate.Create(CheckBox)
+Gui.Form.chkAllocate.Enabled(True)
+Gui.Form.chkAllocate.Visible(True)
+Gui.Form.chkAllocate.Zorder(0)
+Gui.Form.chkAllocate.Size(112,20)
+Gui.Form.chkAllocate.Position(576,20)
+Gui.Form.chkAllocate.Caption("Allocate Pounds In")
+Gui.Form.chkAllocate.FontName("Tahoma")
+Gui.Form.chkAllocate.FontSize(8.25)
+Gui.Form.chkAllocate.Parent("frame1")
+Gui.Form.chkAllocate.Anchor(9)
+Gui.Form.cmdRefresh.Create(Button)
+Gui.Form.cmdRefresh.Enabled(True)
+Gui.Form.cmdRefresh.Visible(True)
+Gui.Form.cmdRefresh.Zorder(0)
+Gui.Form.cmdRefresh.Size(75,23)
+Gui.Form.cmdRefresh.Position(225,20)
+Gui.Form.cmdRefresh.Caption("Refresh")
+Gui.Form.cmdRefresh.FontName("Tahoma")
+Gui.Form.cmdRefresh.FontSize(8.25)
+Gui.Form.cmdRefresh.Event(Click,cmdRefresh_Click)
+Gui.Form.cmdExport.Create(Button)
+Gui.Form.cmdExport.Enabled(True)
+Gui.Form.cmdExport.Visible(True)
+Gui.Form.cmdExport.Zorder(0)
+Gui.Form.cmdExport.Size(75,23)
+Gui.Form.cmdExport.Position(304,20)
+Gui.Form.cmdExport.Caption("Export")
+Gui.Form.cmdExport.FontName("Tahoma")
+Gui.Form.cmdExport.FontSize(8.25)
+Gui.Form.cmdExport.Event(Click,cmdExport_Click)
+Program.Sub.ScreenSU.End
+
+Program.Sub.Preflight.Start
+Program.Sub.Preflight.End
+
+Program.Sub.Main.Start
+v.Local.dBeg.Declare
+Function.Intrinsic.UI.UsePixels ' Allows you to use Pixels instead of Twips throughout
+
+f.Intrinsic.Control.CallSub(checkCustomFolder)
+f.Intrinsic.Control.CallSub(createDisplayDT)
+f.Intrinsic.Control.CallSub(loadGridProperties)
+f.Intrinsic.Control.CallSub(Deserialize)
+f.Intrinsic.Date.BeginningOfMonth(v.Ambient.Date, v.Local.dBeg)
+gui.Form.dtp1.Value(v.Local.dBeg.PSQLFriendly)
+
+gui.Form..Show
+Program.Sub.Main.End
+
+Program.Sub.createDisplayDT.Start
+f.Intrinsic.Control.Try
+	f.Data.DataTable.Create("displayDT", true)
+	f.Data.DataTable.AddColumn("displayDT", "DayString", "String")
+	f.Data.DataTable.AddColumn("displayDT", "prodDate", "Date")
+	f.Data.DataTable.AddColumn("displayDT", "Job", "String")
+	f.Data.DataTable.AddColumn("displayDT", "Order_No", "String")
+	f.Data.DataTable.AddColumn("displayDT", "Customer", "String")
+	f.Data.DataTable.AddColumn("displayDT", "Customer_Name", "String")
+	f.Data.DataTable.AddColumn("displayDT", "Color", "String")
+	f.Data.DataTable.AddColumn("displayDT", "Materials", "String")
+	f.Data.DataTable.AddColumn("displayDT", "FR_Type", "String")
+	f.Data.DataTable.AddColumn("displayDT", "SoC", "String")
+	f.Data.DataTable.AddColumn("displayDT", "PoundIn", "Float", 0)
+	f.Data.DataTable.AddColumn("displayDT", "FinishedPounds", "Float", 0)
+	f.Data.DataTable.AddColumn("displayDT", "InvoiceWeight", "Float", 0)
+	f.Data.DataTable.AddColumn("displayDT", "WeightDiff", "Float", 0)
+	f.Data.DataTable.AddColumn("displayDT", "ChemicPercent", "Float", 0)
+	f.Data.DataTable.AddColumn("displayDT", "ChemicPercentCost", "Float", 1)	
+	f.Data.DataTable.AddColumn("displayDT", "SellingPrice", "Float")
+	f.Data.DataTable.AddColumn("displayDT", "VarCosts", "Float", 0.065)
+	f.Data.Datatable.AddExpressionColumn("displayDT", "NetPrice", "Float", "SellingPrice - VarCosts")
+	f.Data.DataTable.AddColumn("displayDT", "RawMaterialCost_f", "Float", 0)
+	f.Data.DataTable.AddColumn("displayDT", "FR_Chemical_UC_f", "Float", 0)
+	f.Data.DataTable.AddColumn("displayDT", "DyeStuff_UC_f", "Float", 0)
+	f.Data.DataTable.AddColumn("displayDT", "BleachChem_UC_f", "Float", 0)
+	f.Data.DataTable.AddExpressionColumn("displayDT", "RawMaterialCost", "Float", "isnull(RawMaterialCost_f,0)")
+	f.Data.DataTable.AddExpressionColumn("displayDT", "FR_Chemical_UC", "Float", "isnull(FR_Chemical_UC_f,0)")
+	f.Data.DataTable.AddExpressionColumn("displayDT", "DyeStuff_UC", "Float", "isnull(DyeStuff_UC_f,0)")
+	f.Data.DataTable.AddExpressionColumn("displayDT", "BleachChem_UC", "Float", "isnull(BleachChem_UC_f,0)")
+	f.Data.DataTable.AddExpressionColumn("displayDT", "MfgCost", "Float", "RawMaterialCost + FR_Chemical_UC + DyeStuff_UC + BleachChem_UC")
+	f.Data.DataTable.AddExpressionColumn("displayDT", "Cost", "Float", "MfgCost / ChemicPercentCost")
+	f.Data.DataTable.AddExpressionColumn("displayDT", "ValueAdded", "Float", "NetPrice - Cost")
+	f.Data.DataTable.AddExpressionColumn("displayDT", "JobValueAdded", "Float", "FinishedPounds * ValueAdded")
+	f.Data.DataTable.AddColumn("displayDT", "JobValueAdded_F", "Float", 0)
+	f.Data.DataTable.AddColumn("displayDT", "FixedCosts", "Float")
+	f.Data.DataTable.AddColumn("displayDT", "Situation", "Float")
+	f.Data.DataTable.AddExpressionColumn("displayDT", "Gross_Sales", "Float", "FinishedPounds * SellingPrice")
+	f.Data.DataTable.AddColumn("displayDT", "Gross_Sales_F", "Float", 0)
+	f.Data.DataTable.AddExpressionColumn("displayDT", "RM_CostDsp", "Float", "PoundIn * RawMaterialCost")
+	f.Data.DataTable.AddExpressionColumn("displayDT", "RM_Cost_Per_Sales_Val", "Float", "RM_CostDsp / Gross_Sales_F")
+	f.Data.DataTable.AddExpressionColumn("displayDT", "FR_ChemicalDsp", "Float", "PoundIn * FR_Chemical_UC")
+	f.Data.DataTable.AddExpressionColumn("displayDT", "DyeStuffDsp", "Float", "PoundIn * DyeStuff_UC")
+	f.Data.DataTable.AddExpressionColumn("displayDT", "BleachChemDsp", "Float", "PoundIn * BleachChem_UC")
+	f.Data.DataTable.AddColumn("displayDT", "RM_Cost", "Float", 0)
+	f.Data.DataTable.AddColumn("displayDT", "FR_Chemical", "Float", 0)
+	f.Data.DataTable.AddColumn("displayDT", "DyeStuff", "Float", 0)
+	f.Data.DataTable.AddColumn("displayDT", "BleachChem", "Float", 0)
+	
+	f.Data.DataView.Create("displayDT", "displayDV", 22)
+	gui.Form.GsGcDisplay.AddGridviewFromDataview("displayGV", "displayDT", "displayDV")
+	gui.Form.GsGcDisplay.MainView("displayGV")
+	
+	f.Data.DataTable.Create("costsDT", true)
+	f.Data.DataTable.AddColumn("costsDT", "VC", "Float")
+	f.Data.DataTable.AddColumn("costsDT", "FRAP", "Float")
+	f.Data.DataTable.AddColumn("costsDT", "FRAS", "Float")
+	f.Data.DataTable.AddColumn("costsDT", "FCWD", "Float")
+	f.Data.DataTable.AddColumn("costsDT", "FCWE", "Float")
+	
+	f.ODBC.Connection!con.OpenCompanyConnection
+		'Get Costs from Maint GCG_6539_COST_MAINT
+		f.Data.Datatable.CreateFromSQL("tmpCostDT", "con", "Select top 1 * from GCG_6539_COST_MAINT")
+		f.Data.Datatable.DeleteRow("costsDT")
+		f.Data.Datatable.AcceptChanges("costsDT")
+		f.Data.Datatable.Merge("tmpCostDT", "costsDT", false, 2)
+		f.Data.Datatable.Close("tmpCostDT")
+		f.Data.Datatable.AcceptChanges("costsDT") 
+	f.ODBC.Connection!con.Close
+	
+	f.Data.DataView.Create("costsDT", "costsDV", 22)
+	gui.Form.GsGcCosts.AddGridviewFromDataview("costsGV", "costsDT", "costsDV")
+	gui.Form.GsGcCosts.MainView("costsGV")
+f.Intrinsic.Control.Catch
+	f.Intrinsic.Control.CallSub(ErrorMsg, CurrentSub, v.Ambient.CurrentSubroutine)
+f.Intrinsic.Control.EndTry
+Program.Sub.createDisplayDT.End
+
+Program.Sub.loadGridProperties.Start
+v.Local.iCnt.Declare
+v.Local.sFields.Declare
+v.Local.iVisibleIndex.Declare
+
+f.Intrinsic.Control.Try
+	f.Intrinsic.String.Split(v.DataTable.costsDT.FieldNames, "*!*", v.Local.sFields)
+	f.Intrinsic.Control.For(v.Local.iCnt, 0, v.Local.sFields.UBound, 1)
+		gui.Form.GsGcCosts.SetColumnProperty("costsGV", v.Local.sFields(v.Local.iCnt), "HeaderFontBold", True)
+		gui.Form.GsGcCosts.SetColumnProperty("costsGV", v.Local.sFields(v.Local.iCnt), "Visible", True)
+		gui.Form.GsGcCosts.SetColumnProperty("costsGV", v.Local.sFields(v.Local.iCnt), "ReadOnly", True)
+		gui.Form.GsGcCosts.SetColumnProperty("costsGV", v.Local.sFields(v.Local.iCnt), "AllowEdit", False)
+		gui.Form.GsGcCosts.SetColumnProperty("costsGV", v.Local.sFields(v.Local.iCnt), "HeaderHAlignment", "Near")
+		gui.Form.GsGcCosts.SetColumnProperty("costsGV", v.Local.sFields(v.Local.iCnt), "CellHAlignment", "Near")
+		gui.Form.GsGcCosts.SetColumnProperty("costsGV", v.Local.sFields(v.Local.iCnt), "HeaderBackColor", v.Color.GSS)
+		gui.Form.GsGcCosts.SetColumnProperty("costsGV", v.Local.sFields(v.Local.iCnt), "HeaderForeColor", v.Color.White)
+	f.Intrinsic.Control.Next(v.Local.iCnt)
+	
+	'GridView Properties
+	gui.Form.GsGcCosts.BestFitColumns("costsGV")
+	gui.Form.GsGcCosts.ClearGrouping("costsGV")
+	gui.Form.GsGcCosts.SetGridviewProperty("costsGV", "OptionsViewColumnAutoWidth", False)
+	
+	f.Intrinsic.String.Split(v.DataTable.displayDT.FieldNames, "*!*", v.Local.sFields)
+	f.Intrinsic.Control.For(v.Local.iCnt, 0, v.Local.sFields.UBound, 1)
+		gui.Form.GsGcDisplay.SetColumnProperty("displayGV", v.Local.sFields(v.Local.iCnt), "HeaderFontBold", True)
+		gui.Form.GsGcDisplay.SetColumnProperty("displayGV", v.Local.sFields(v.Local.iCnt), "Visible", True)
+		gui.Form.GsGcDisplay.SetColumnProperty("displayGV", v.Local.sFields(v.Local.iCnt), "ReadOnly", True)
+		gui.Form.GsGcDisplay.SetColumnProperty("displayGV", v.Local.sFields(v.Local.iCnt), "AllowEdit", False)
+		gui.Form.GsGcDisplay.SetColumnProperty("displayGV", v.Local.sFields(v.Local.iCnt), "HeaderHAlignment", "Near")
+		gui.Form.GsGcDisplay.SetColumnProperty("displayGV", v.Local.sFields(v.Local.iCnt), "CellHAlignment", "Near")
+		gui.Form.GsGcDisplay.SetColumnProperty("displayGV", v.Local.sFields(v.Local.iCnt), "HeaderBackColor", v.Color.GSS)
+		gui.Form.GsGcDisplay.SetColumnProperty("displayGV", v.Local.sFields(v.Local.iCnt), "HeaderForeColor", v.Color.White)
+	f.Intrinsic.Control.Next(v.Local.iCnt)
+	
+	'GridView Properties
+	gui.Form.GsGcDisplay.BestFitColumns("displayGV")
+	gui.Form.GsGcDisplay.ClearGrouping("displayGV")
+	gui.Form.GsGcDisplay.SetGridviewProperty("displayGV", "OptionsViewColumnAutoWidth", False)
+	'gui.Form.GsGcDisplay.SetGridviewProperty("displayGV", "OptionsViewShowAutoFilterRow", True)
+	'gui.Form.GsGcDisplay.SetGridviewProperty("displayGV", "OptionsFindAlwaysVisible", True)
+	gui.Form.GsGcDisplay.SetGridviewProperty("displayGV", "Showgrouppanel", True)
+	
+	'Possible Column Properties 
+	'gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "Default", "ReadOnly", False)
+	'gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "Default", "AllowEdit", True)
+	'gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "Default", "HeaderHAlignment", "Center")
+	'gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "Default", "CellHAlignment", "Center")
+	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "prodDate", "GroupIndex", 0)
+	'Caption
+	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "DayString", "Caption", "WeekDay")
+	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "prodDate", "Caption", "Prod Date")
+	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "Job", "Caption", "Job #")
+	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "Order_No", "Caption", "Sales Order #")
+	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "Customer_Name", "Caption", "Customer")
+	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "Color", "Caption", "Color")
+	'gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "Comp_Part", "Caption", "Comp Part")
+	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "FR_Type", "Caption", "FR Type")
+	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "SoC", "Caption", "S or C")
+	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "PoundIn", "Caption", "Pounds In")
+	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "FinishedPounds", "Caption", "Finished Pounds")
+	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "InvoiceWeight", "Caption", "Invoice Weight")
+	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "WeightDiff", "Caption", "Weight Diff")
+	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "ChemicPercent", "Caption", "Chemic al %")
+	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "SellingPrice", "Caption", "Selling Price")
+	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "VarCosts", "Caption", "Variable Costs")
+	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "NetPrice", "Caption", "Net Price")
+	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "RawMaterialCost", "Caption", "Raw Material Cost")
+	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "FR_Chemical_UC", "Caption", "FR Chemical")
+	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "DyeStuff_UC", "Caption", "Dyestuff")
+	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "BleachChem_UC", "Caption", "Bleach or Chemicals")
+	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "MfgCost", "Caption", "Mfg Cost")
+	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "ValueAdded", "Caption", "Value Added")
+	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "JobValueAdded_F", "Caption", "Job Value Added")
+	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "FixedCosts", "Caption", "Fixed Costs")
+	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "Situation", "Caption", "Situation")
+	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "Gross_Sales_F", "Caption", "Gross Sales")
+	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "RM_Cost", "Caption", "RM Cost")
+	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "RM_Cost_Per_Sales_Val", "Caption", "RM Cost as % of SALES Value")
+	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "FR_Chemical", "Caption", "FR Chemical")
+	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "DyeStuff", "Caption", "Dyestuff")
+	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "BleachChem", "Caption", "Bleach or Chemicals")
+	'Visible
+	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "RM_CostDsp", "Visible", False)
+	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "FR_ChemicalDsp", "Visible", False)
+	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "DyeStuffDsp", "Visible", False)
+	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "BleachChemDsp", "Visible", False)
+	
+	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "JobValueAdded", "Visible", False)
+	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "Gross_Sales", "Visible", False)
+	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "ChemicPercentCost", "Visible", False)
+	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "RawMaterialCost_f", "Visible", False)
+	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "FR_Chemical_UC_f", "Visible", False)
+	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "DyeStuff_UC_f", "Visible", False)
+	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "BleachChem_UC_f", "Visible", False)
+	'Date Format
+	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "prodDate", "DisplayCustomDatetime", "d")
+	'Percentage Format
+	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "ChemicPercent", "DisplayCustomNumeric", "0.00%")
+	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "RM_Cost_Per_Sales_Val", "DisplayCustomNumeric", "0.00%")
+	'Money Format
+	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "SellingPrice", "DisplayCustomNumeric", "$#,##0.0000")
+	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "VarCosts", "DisplayCustomNumeric", "$#,##0.0000")
+	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "NetPrice", "DisplayCustomNumeric", "$#,##0.0000")
+	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "RawMaterialCost", "DisplayCustomNumeric", "$#,##0.0000")
+	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "FR_Chemical_UC", "DisplayCustomNumeric", "$#,##0.0000")
+	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "DyeStuff_UC", "DisplayCustomNumeric", "$#,##0.0000")
+	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "BleachChem_UC", "DisplayCustomNumeric", "$#,##0.0000")
+	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "MfgCost", "DisplayCustomNumeric", "$#,##0.0000")
+	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "Cost", "DisplayCustomNumeric", "$#,##0.0000")
+	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "ValueAdded", "DisplayCustomNumeric", "$#,##0.0000")
+	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "JobValueAdded_F", "DisplayCustomNumeric", "$#,##0.00")
+	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "FixedCosts", "DisplayCustomNumeric", "$#,##0.00")
+	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "Situation", "DisplayCustomNumeric", "$#,##0.00")
+	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "Gross_Sales_F", "DisplayCustomNumeric", "$#,##0.00")
+	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "RM_Cost", "DisplayCustomNumeric", "$#,##0.0000")
+	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "FR_Chemical", "DisplayCustomNumeric", "$#,##0.0000")
+	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "DyeStuff", "DisplayCustomNumeric", "$#,##0.0000")
+	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "BleachChem", "DisplayCustomNumeric", "$#,##0.0000")
+	'Group Summary
+'	gui.Form.GsGcDisplay.AddGridGroupSummaryItem("displayGV", "PoundIn", "PoundInTag", "Sum", " PoundIn: ", "", "n")
+'	gui.Form.GsGcDisplay.AddGridGroupSummaryItem("displayGV", "FinishedPounds", "FinishedPoundsTag", "Sum", " FinishedPounds: ", "", "n")
+'	gui.Form.GsGcDisplay.AddGridGroupSummaryItem("displayGV", "InvoiceWeight", "InvoiceWeightTag", "Sum", " InvoiceWeight: ", "", "n")
+'	gui.Form.GsGcDisplay.AddGridGroupSummaryItem("displayGV", "WeightDiff", "WeightDiffTag", "Sum", " WeightDiff: ", "", "n")
+'	gui.Form.GsGcDisplay.AddGridGroupSummaryItem("displayGV", "JobValueAdded_F", "JobValueAddedTag", "Sum", " JobValueAdded: ", "", "C2")
+'	gui.Form.GsGcDisplay.AddGridGroupSummaryItem("displayGV", "FixedCosts", "FixedCostsTag", "Average", " FixedCosts: ", "", "C2")
+'	gui.Form.GsGcDisplay.AddGridGroupSummaryItem("displayGV", "Situation", "SituationTag", "Sum", " Situation: ", "", "C2")
+'	gui.Form.GsGcDisplay.AddGridGroupSummaryItem("displayGV", "Gross_Sales_F", "Gross_SalesTag", "Sum", " Gross_Sales_F: ", "", "C2")
+'	gui.Form.GsGcDisplay.AddGridGroupSummaryItem("displayGV", "FR_Chemical", "FR_ChemicalTag", "Sum", " FR_Chemical: ", "", "C2")
+'	gui.Form.GsGcDisplay.AddGridGroupSummaryItem("displayGV", "DyeStuff", "DyeStuffTag", "Sum", " DyeStuff: ", "", "C2")
+'	gui.Form.GsGcDisplay.AddGridGroupSummaryItem("displayGV", "BleachChem", "BleachChemTag", "Sum", " BleachChem: ", "", "C2")
+	'VisibleIndex
+'	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "DayString", "VisibleIndex", v.Local.iVisibleIndex)
+'	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "prodDate", "VisibleIndex", v.Local.iVisibleIndex.++)
+'	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "Job", "VisibleIndex", v.Local.iVisibleIndex.++)
+'	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "Order_No", "VisibleIndex", v.Local.iVisibleIndex.++)
+'	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "Customer_Name", "VisibleIndex", v.Local.iVisibleIndex.++)
+'	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "Color", "VisibleIndex", v.Local.iVisibleIndex.++)
+'	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "Comp_Part", "VisibleIndex", v.Local.iVisibleIndex.++)
+'	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "Materials", "VisibleIndex", v.Local.iVisibleIndex.++)
+'	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "FR_Type", "VisibleIndex", v.Local.iVisibleIndex.++)
+'	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "SoC", "VisibleIndex", v.Local.iVisibleIndex.++)
+'	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "PoundIn", "VisibleIndex", v.Local.iVisibleIndex.++)
+'	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "FinishedPounds", "VisibleIndex", v.Local.iVisibleIndex.++)
+'	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "InvoiceWeight", "VisibleIndex", v.Local.iVisibleIndex.++)
+'	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "WeightDiff", "VisibleIndex", v.Local.iVisibleIndex.++)
+'	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "Default", "VisibleIndex", v.Local.iVisibleIndex.++)
+'	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "Default", "VisibleIndex", v.Local.iVisibleIndex.++)
+'	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "Default", "VisibleIndex", v.Local.iVisibleIndex.++)
+'	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "Default", "VisibleIndex", v.Local.iVisibleIndex.++)
+'	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "Default", "VisibleIndex", v.Local.iVisibleIndex.++)
+'	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "Default", "VisibleIndex", v.Local.iVisibleIndex.++)
+'	gui.Form.GsGcDisplay.SetColumnProperty("displayGV", "Default", "VisibleIndex", v.Local.iVisibleIndex.++)
+	'Conditional Formatting
+	'gui.Form.GsGcDisplay.AddStyleFormatCondition("displayGV", "columnName", "TagName", "EQUAL", 1)
+	'gui.Form.GsGcDisplay.SetStyleFormatConditionProperty("displayGV", "columnName", "TagName", "ApplyToRow", True) 
+	'gui.Form.GsGcDisplay.SetStyleFormatConditionProperty("displayGV", "columnName", "TagName", "BackColor", "Color") 
+f.Intrinsic.Control.Catch
+	f.Intrinsic.Control.CallSub(ErrorMsg, CurrentSub, v.Ambient.CurrentSubroutine)
+f.Intrinsic.Control.EndTry
+Program.Sub.loadGridProperties.End
+
+Program.Sub.cmdExport_Click.Start
+v.Local.bExcel.Declare
+v.Local.sFilePath.Declare
+f.Intrinsic.Control.Try
+	f.Intrinsic.String.Build("{0}\CUSTOM\GCG_6539\{1}_DailyProduction_{2}", v.Caller.GlobalDir, v.Ambient.Date.PervasiveDate, v.Caller.User, v.Local.sFilePath)
+	f.Automation.MSExcel.CheckPresence(v.Local.bExcel)
+	f.Intrinsic.Control.If(v.Local.bExcel)
+		f.Intrinsic.String.Build("{0}.xlsx", v.Local.sFilePath, v.Local.sFilePath)
+		Gui.Form.GsGcDisplay.Export(V.Local.sFilePath, "xlsx")
+	f.Intrinsic.Control.Else
+		f.Intrinsic.String.Build("{0}.csv", v.Local.sFilePath, v.Local.sFilePath)
+		F.Data.DataTable.SaveToCSV("displayDT", V.Local.sFilePath, True)
+	f.Intrinsic.Control.EndIf
+	
+	F.Intrinsic.Task.ShellExec(V.Caller.Handle, "open", V.Local.sFilePath,"", "", 1)
+f.Intrinsic.Control.Catch
+	f.Intrinsic.Control.CallSub(ErrorMsg, CurrentSub, v.Ambient.CurrentSubroutine)
+f.Intrinsic.Control.EndTry
+Program.Sub.cmdExport_Click.End
+
+Program.Sub.checkCustomFolder.Start
+v.Local.sFolder.Declare
+v.Local.bExists.Declare
+f.Intrinsic.Control.Try
+	f.Intrinsic.String.Build("{0}\CUSTOM\GCG_6539\", v.Caller.GlobalDir, v.Local.sFolder)
+	f.Intrinsic.File.DirExists(v.Local.sFolder, v.Local.bExists)
+	f.Intrinsic.Control.If(v.Local.bExists.Not)
+		f.Intrinsic.File.CreateDir(v.Local.sFolder)
+	f.Intrinsic.Control.EndIf
+f.Intrinsic.Control.Catch
+	f.Intrinsic.Control.CallSub(ErrorMsg, CurrentSub, v.Ambient.CurrentSubroutine)
+f.Intrinsic.Control.EndTry
+Program.Sub.checkCustomFolder.End
+
+Program.Sub.cmdRefresh_Click.Start
+v.Local.sSQL.Declare
+v.Local.sBeg.Declare
+v.Local.sEnd.Declare
+v.Local.sChar.Declare
+
+v.Local.iCnt.Declare
+v.Local.fChem.Declare
+v.Local.fWeightDiff.Declare("Float", 0)
+v.Local.fPoundIn.Declare("Float", 0)
+v.Local.fTmp.Declare
+v.Local.sFilter.Declare
+
+v.Local.fPoundOut.Declare
+v.Local.fPercentage.Declare
+v.Local.fExpectedOut.Declare
+v.Local.fAllocation.Declare
+v.Local.fRemainder.Declare
+v.Local.iCnt2.Declare
+v.Local.fCost.Declare
+
+v.Local.sJobList.Declare
+
+v.Local.fPercAlloc.Declare
+f.Intrinsic.Control.Try
+	'v.Local.dBeg.Set(v.Screen.Form!dtp1.Value)
+	'v.Local.dEnd.Set(v.Screen.Form!dtp2.Value)
+	f.Intrinsic.String.Format(v.Screen.Form!dtp1.Value, "YYYY-MM-DD", v.Local.sBeg)
+	f.Intrinsic.String.Format(v.Screen.Form!dtp2.Value, "YYYY-MM-DD", v.Local.sEnd)
+
+	f.ODBC.Connection!con.OpenCompanyConnection
+		'Get Costs from Maint GCG_6539_COST_MAINT
+		f.Data.Datatable.CreateFromSQL("tmpCostDT", "con", "Select top 1 * from GCG_6539_COST_MAINT")
+		f.Data.Datatable.DeleteRow("costsDT")
+		f.Data.Datatable.AcceptChanges("costsDT")
+		f.Data.Datatable.Merge("tmpCostDT", "costsDT", false, 2)
+		f.Data.Datatable.Close("tmpCostDT")
+		f.Data.Datatable.AcceptChanges("costsDT")
+		'Get JobList
+		f.Intrinsic.String.Build("Select distinct job from V_INVENTORY_HIST where code_transaction = 'J52' and part <> '' and date_history >= '{0}' and date_history <= '{1}' order by job asc;", v.Local.sBeg, v.Local.sEnd, v.Local.sSQL)
+		f.ODBC.Connection!con.ExecuteAndReturn(v.Local.sSQL, v.Local.sJobList)
+
+		f.Intrinsic.String.Replace(v.Local.sJobList, "#$#", "','", v.Local.sJobList)
+		'Issue QTY
+		f.Intrinsic.String.Build("select date_history , job, (sum(Quantity) * -1) as qty_PoundIn from V_INVENTORY_HIST where code_transaction = 'J55' and Job in ('{0}') and part like 'RM%' group by date_history, job order by date_history, job asc;", v.Local.sJobList, v.Local.sSQL)
+		f.Data.Datatable.CreateFromSQL("compDT", "con", v.Local.sSQL)
+		
+		'Part 
+'************ Original
+'		'RM Cost
+'		f.Intrinsic.String.Build("select date_history , job, cast(sum(cost * quantity * -1) as double) as RawMaterialCost_f from V_INVENTORY_HIST where code_transaction = 'J55' and part like 'RM%' and date_history >= '{0}' and date_history <= '{1}' group by date_history, job order by date_history, job asc;", v.Local.sBeg, v.Local.sEnd, v.Local.sSQL)
+'		f.Data.Datatable.CreateFromSQL("rmDT", "con", v.Local.sSQL)
+'		'FR Chem
+'		f.Intrinsic.String.Build("select date_history , job, cast(sum(cost * quantity * -1) as double) as FR_Chemical_UC_f from V_INVENTORY_HIST where code_transaction = 'J55' and part like 'FR%' and date_history >= '{0}' and date_history <= '{1}' group by date_history, job order by date_history, job asc;", v.Local.sBeg, v.Local.sEnd, v.Local.sSQL)
+'		f.Data.Datatable.CreateFromSQL("frDT", "con", v.Local.sSQL)
+'		'Dyestuff
+'		f.Intrinsic.String.Build("select date_history , job, cast(sum(cost * quantity * -1)  as double) as DyeStuff_UC_f from V_INVENTORY_HIST where code_transaction = 'J55' and part like 'DS%' and date_history >= '{0}' and date_history <= '{1}' group by date_history, job order by date_history, job asc;", v.Local.sBeg, v.Local.sEnd, v.Local.sSQL)
+'		f.Data.Datatable.CreateFromSQL("dsDT", "con", v.Local.sSQL)
+'		'Bleach
+'		f.Intrinsic.String.Build("select date_history , job, cast(sum(cost * quantity * -1)  as double) as BleachChem_UC_f from V_INVENTORY_HIST where code_transaction = 'J55' and part like 'CH%' and date_history >= '{0}' and date_history <= '{1}' group by date_history, job order by date_history, job asc;", v.Local.sBeg, v.Local.sEnd, v.Local.sSQL)
+'		f.Data.Datatable.CreateFromSQL("chDT", "con", v.Local.sSQL)
+''************ NEW 
+		'RM Cost
+		f.Intrinsic.String.Build("select date_history , job, cast(sum(cost * quantity * -1) as double) as RawMaterialCost_f from V_INVENTORY_HIST where code_transaction = 'J55' and part like 'RM%' and job in ('{0}') group by date_history, job order by date_history, job asc;", v.Local.sJobList, v.Local.sSQL)
+		f.Data.Datatable.CreateFromSQL("rmDT", "con", v.Local.sSQL)
+		'FR Chem
+		f.Intrinsic.String.Build("select date_history , job, cast(sum(cost * quantity * -1) as double) as FR_Chemical_UC_f from V_INVENTORY_HIST where code_transaction = 'J55' and part like 'FR%' and job in ('{0}') group by date_history, job order by date_history, job asc;", v.Local.sJobList, v.Local.sSQL)
+		f.Data.Datatable.CreateFromSQL("frDT", "con", v.Local.sSQL)
+
+		'Dyestuff
+		f.Intrinsic.String.Build("select date_history , job, cast(sum(cost * quantity * -1)  as double) as DyeStuff_UC_f from V_INVENTORY_HIST where code_transaction = 'J55' and part like 'DS%' and job in ('{0}') group by date_history, job order by date_history, job asc;", v.Local.sJobList, v.Local.sSQL)
+		f.Data.Datatable.CreateFromSQL("dsDT", "con", v.Local.sSQL)
+		'Bleach
+		f.Intrinsic.String.Build("select date_history , job, cast(sum(cost * quantity * -1)  as double) as BleachChem_UC_f from V_INVENTORY_HIST where code_transaction = 'J55' and part like 'CH%' and job in ('{0}') group by date_history, job order by date_history, job asc;", v.Local.sJobList, v.Local.sSQL)
+		f.Data.Datatable.CreateFromSQL("chDT", "con", v.Local.sSQL)
+		'FG
+		f.Intrinsic.String.Build("select Date_History as prodDate, Job, part, sum(quantity) as qty_FinishedPounds, sum(quantity) as qty_InvoiceWeight from V_INVENTORY_HIST where code_transaction = 'J52' and part <> '' and job in ('{0}') group by Date_History, Job, part order by Date_History, job asc;", v.Local.sJobList, v.Local.sSQL)
+		f.Data.Datatable.CreateFromSQL("fgDT", "con", v.Local.sSQL)
+		'Dates
+		f.Intrinsic.String.Build("select distinct Date_History as prodDate, Job from V_INVENTORY_HIST where code_transaction in ('J52', 'J55') and part <> '' and job in ('{0}') group by Date_History, Job, part order by Date_History, job asc;", v.Local.sJobList, v.Local.sSQL)
+		f.Data.Datatable.CreateFromSQL("datesDT", "con", v.Local.sSQL)
+'		f.Data.Dictionary.CreateFromSQL("weightDict", "con", "Select Part, LBS from V_Inventory_All where LBS <> ''")
+'		f.Data.Dictionary.SetDefaultReturn("weightDict", 0)
+'		
+'			f.Data.Datatable.AddColumn("compDT", "LBS", "Float", 0)
+'			f.Data.Datatable.AddColumn("fgDT", "LBS", "Float", 0)
+'			
+'			f.Data.Datatable.FillFromDictionary("compDT", "weightDict", "Part", "LBS")
+'			f.Data.Datatable.FillFromDictionary("fgDT", "weightDict", "Part", "LBS")
+'		
+'		f.Data.Dictionary.Close("weightDict")
+
+		'f.Data.Datatable.AddExpressionColumn("compDT", "PoundIn", "Float", "comp_qty")
+'		f.Data.Datatable.AddExpressionColumn("fgDT", "FinishedPounds", "Float", "quantity ")
+'		f.Data.Datatable.AddExpressionColumn("fgDT", "InvoiceWeight", "Float", "quantity")
+		f.Data.Linq.Join(v.Enum.LinqJoinType!FullJoin, v.Enum.LinqSourceType!DataTable, "datesDT*!*D", v.Enum.LinqSourceType!DataTable, "compDT*!*A", "D.prodDate = A.date_history and D.Job = A.Job", v.Enum.LinqSourceType!DataTable, "rmDT*!*B", "D.prodDate = B.date_history and D.Job = B.Job", v.Enum.LinqSourceType!DataTable, "frDT*!*C", "D.prodDate = C.date_history and D.Job = C.Job", v.Enum.LinqSourceType!DataTable, "dsDT*!*F", "D.prodDate = F.date_history and D.Job = F.Job", v.Enum.LinqSourceType!DataTable, "chDT*!*E", "D.prodDate = E.date_history and D.Job = E.Job", "D.prodDate*!*D.Job*!*A.qty_PoundIn*!*B.RawMaterialCost_f*!*C.FR_Chemical_UC_f*!*F.DyeStuff_UC_f*!*E.BleachChem_UC_f", "", "", "", "cmpDT", True)
+		
+		'f.Data.Linq.Join(v.Enum.LinqJoinType!LeftJoin, v.Enum.LinqSourceType!DataTable, "compDT*!*C", v.Enum.LinqSourceType!DataTable, "costDT*!*F", "C.date_history = F.date_history and C.Job = F.Job and c.Part = f.Part", "c.date_history*!*c.Job*!*c.Part*!*c.comp_qty*!*c.PoundIn*!*f.RawMaterialCost_f*!*f.FR_Chemical_UC_f*!*f.DyeStuff_UC_f*!*f.BleachChem_UC_f", "", "", "", "cmpDT", True)
+		
+		f.Data.Linq.Join(v.Enum.LinqJoinType!FullJoin, v.Enum.LinqSourceType!DataTable, "datesDT*!*D", v.Enum.LinqSourceType!DataTable, "fgDT*!*F", "D.prodDate = F.prodDate and D.Job = F.Job", v.Enum.LinqSourceType!DataTable, "cmpDT*!*C","D.prodDate = C.prodDate and D.Job = C.Job", "D.prodDate*!*D.Job*!*f.Part*!*c.qty_PoundIn*!*f.qty_FinishedPounds*!*f.qty_InvoiceWeight*!*c.RawMaterialCost_f*!*c.FR_Chemical_UC_f*!*c.DyeStuff_UC_f*!*c.BleachChem_UC_f", "", "", "", "tmpDT", True)
+	
+	'Create Dictionaries
+		'Order Dict
+		f.Data.Dictionary.CreateFromSQL("orderDict", "con", "select job, order_no from ORDER_TO_WO")
+		f.Data.Dictionary.SetDefaultReturn("orderDict", "")
+		f.Data.Datatable.AddColumn("tmpDT", "Order_No", "String")
+		f.Data.Datatable.FillFromDictionary("tmpDT", "orderDict", "Job", "Order_No")
+		f.Data.Dictionary.Close("orderDict")
+		'Customer
+		f.Data.Dictionary.CreateFromSQL("custDict", "con", "select distinct job, customer from V_JOB_HEADER")
+		f.Data.Dictionary.SetDefaultReturn("custDict", "Stock")
+		f.Data.Datatable.AddColumn("tmpDT", "Customer", "String")
+		f.Data.Datatable.FillFromDictionary("tmpDT", "custDict", "Job", "Customer")
+		f.Data.Dictionary.Close("custDict")
+		'Customer Name
+		f.Data.Dictionary.CreateFromSQL("custDict", "con", "select Customer, Name_Customer from V_CUSTOMER_MASTER")
+		f.Data.Dictionary.SetDefaultReturn("custDict", "")
+		f.Data.Datatable.AddColumn("tmpDT", "Customer_Name", "String")
+		f.Data.Datatable.FillFromDictionary("tmpDT", "custDict", "Customer", "Customer_Name")
+		f.Data.Dictionary.Close("custDict")
+		'Color (Job_Header UF1)
+		f.Data.Dictionary.CreateFromSQL("userDict", "con", "select distinct job, User_1 from V_WO_USER_FLDS")
+		f.Data.Dictionary.SetDefaultReturn("userDict", "")
+		f.Data.Datatable.AddColumn("tmpDT", "Color", "String")
+		f.Data.Datatable.FillFromDictionary("tmpDT", "userDict", "Job", "Color")
+		f.Data.Dictionary.Close("userDict")
+		'SoC (Job_Header UF2)
+		f.Data.Dictionary.CreateFromSQL("userDict", "con", "select distinct job, User_2 from V_WO_USER_FLDS")
+		f.Data.Dictionary.SetDefaultReturn("userDict", "")
+		f.Data.Datatable.AddColumn("tmpDT", "SoC", "String")
+		f.Data.Datatable.FillFromDictionary("tmpDT", "userDict", "Job", "SoC")
+		f.Data.Dictionary.Close("userDict")
+		'Router
+		f.Data.Dictionary.CreateFromSQL("RouterDict", "con", "select distinct job, Router from V_JOB_HEADER where parent_wo = ''")
+		f.Data.Dictionary.SetDefaultReturn("RouterDict", "")
+		f.Data.Datatable.AddColumn("tmpDT", "Router", "String")
+		f.Data.Datatable.FillFromDictionary("tmpDT", "RouterDict", "Job", "Router")
+		f.Data.Dictionary.Close("RouterDict")
+		'Router Description
+		f.Data.Dictionary.CreateFromSQL("RouterDict", "con", "select distinct Router, Description_Router from V_ROUTER_HEADER")
+		f.Data.Dictionary.SetDefaultReturn("RouterDict", "")
+		f.Data.Datatable.AddColumn("tmpDT", "Materials", "String")
+		f.Data.Datatable.FillFromDictionary("tmpDT", "RouterDict", "Router", "Materials")
+		f.Data.Dictionary.Close("RouterDict")
+		'Price
+		'f.Data.Dictionary.CreateFromSQL("priceDict", "con", "select distinct job, (qty_order * amt_price_per_unit) as SellingPrice from V_JOB_HEADER where parent_wo = ''")
+		'f.Data.Dictionary.CreateFromSQL("priceDict", "con", "select distinct job, amt_price_per_unit as SellingPrice from V_JOB_HEADER where parent_wo = ''")
+		f.Data.Dictionary.CreateFromSQL("priceDict", "con", "select distinct part, amt_price as SellingPrice from V_INVENTORY_ALL")
+		f.Data.Dictionary.SetDefaultReturn("priceDict", 0.0)
+		f.Data.Datatable.AddColumn("tmpDT", "SellingPrice", "Float")
+		f.Data.Datatable.FillFromDictionary("tmpDT", "priceDict", "Part", "SellingPrice")
+		f.Data.Dictionary.Close("priceDict")
+	f.ODBC.Connection!con.Close
+	
+	'Add Expression Columns ', "SUBSTRING([Comp_Part], 0, 1)")
+	f.Data.Datatable.AddColumn("tmpDT", "FR_Type", "String") 
+	'f.Data.Datatable.SetValueFormat("tmpDT", -1, "Comp_Part", "FR_Type", "@@")
+	'Add Expression Weight Diff
+	f.Data.Datatable.AddExpressionColumn("tmpDT", "PoundIn", "Float", "isnull(qty_PoundIn,0)")
+	f.Data.Datatable.AddExpressionColumn("tmpDT", "FinishedPounds", "Float", "isnull(qty_FinishedPounds,0)")
+	f.Data.Datatable.AddExpressionColumn("tmpDT", "InvoiceWeight", "Float", "isnull(qty_InvoiceWeight,0)")
+	f.Data.Datatable.AddExpressionColumn("tmpDT", "WeightDiff", "Float", "FinishedPounds - PoundIn")
+	
+	'Allocate Weight in
+	f.ODBC.Connection!con.OpenCompanyConnection	
+	
+	'Get Distinct Prod Days and Jobs
+	f.Data.DataView.Create("tmpDT", "tmpDV", 22, "", "prodDate,job asc")
+	f.Data.DataView.ToDataTableDistinct("tmpDT", "tmpDV", "JobDT", "Job")
+	'Loop through Jobs
+	f.Intrinsic.Control.For(v.Local.iCnt, 0, v.DataTable.JobDT.RowCount--, 1)
+		f.Intrinsic.Control.If(v.DataTable.jobDT(v.Local.iCnt).Job!FieldValTrim, =, "003164")
+		'Function.Intrinsic.Debug.InvokeDebugger
+		'Function.Intrinsic.Debug.Stop
+		
+		f.Intrinsic.Control.EndIf
+		'Compute all Pounds in and out
+		f.Intrinsic.String.Build("Job = '{0}'", v.DataTable.jobDT(v.Local.iCnt).Job!FieldValTrim, v.Local.sFilter)
+		f.Data.Datatable.Compute("tmpDT", "Sum(PoundIn)", v.Local.sFilter, v.Local.fPoundIn)
+		f.Data.Datatable.Compute("tmpDT", "Sum(PoundIn)", v.Local.sFilter, v.Local.fRemainder)
+		f.Data.Datatable.Compute("tmpDT", "Sum(FinishedPounds)", v.Local.sFilter, v.Local.fExpectedOut)
+		'f.Intrinsic.String.Build("Select top 1 qty_order from V_JOB_HEADER where Job = '{0}'",  v.DataTable.jobDT(v.Local.iCnt).Job!FieldValTrim, v.Local.sSQL)
+		'f.ODBC.Connection!con.ExecuteAndReturn(v.Local.sSQL, v.Local.fExpectedOut)
+		f.Data.DataView.SetFilter("tmpDT", "tmpDV", v.Local.sFilter)
+		
+		f.Intrinsic.Control.If(v.Local.fPoundIn, <>, 0)		
+			'get RM Cost
+			f.Data.Datatable.Compute("tmpDT", "sum(RawMaterialCost_f)", v.Local.sFilter, v.Local.fCost)
+			f.Intrinsic.Math.Div(v.Local.fCost, v.Local.fPoundIn, v.Local.fCost)
+			f.Data.DataView.SetValue("tmpDT", "tmpDV", -1, "RawMaterialCost_f", v.Local.fCost)
+			'get FR Cost
+			f.Data.Datatable.Compute("tmpDT", "sum(FR_Chemical_UC_f)", v.Local.sFilter, v.Local.fCost)
+			f.Intrinsic.Math.Div(v.Local.fCost, v.Local.fPoundIn, v.Local.fCost)
+			f.Data.DataView.SetValue("tmpDT", "tmpDV", -1, "FR_Chemical_UC_f", v.Local.fCost)
+			'get Dyestuff Cost
+			f.Data.Datatable.Compute("tmpDT", "sum(DyeStuff_UC_f)", v.Local.sFilter, v.Local.fCost)
+			f.Intrinsic.Math.Div(v.Local.fCost, v.Local.fPoundIn, v.Local.fCost)
+			f.Data.DataView.SetValue("tmpDT", "tmpDV", -1, "DyeStuff_UC_f", v.Local.fCost)
+			'get Chem Cost
+			f.Data.Datatable.Compute("tmpDT", "sum(BleachChem_UC_f)", v.Local.sFilter, v.Local.fCost)
+			f.Intrinsic.Math.Div(v.Local.fCost, v.Local.fPoundIn, v.Local.fCost)
+			f.Data.DataView.SetValue("tmpDT", "tmpDV", -1, "BleachChem_UC_f", v.Local.fCost)
+			
+			f.Intrinsic.Control.If(v.Screen.Form!chkAllocate.Value, =, 1)
+				f.Intrinsic.Control.If(v.Local.fExpectedOut, <>, 0)		
+					v.Local.fPercAlloc.Set(0)
+					f.Intrinsic.Control.For(v.Local.iCnt2, 0, v.DataView.tmpDT!tmpDV.RowCount--, 1)
+						v.Local.fPoundOut.Set(v.DataView.tmpDT!tmpDV(v.Local.iCnt2).FinishedPounds!FieldVal)
+						'Calculate Percentaga
+						f.Intrinsic.Math.Div(v.Local.fPoundOut, v.Local.fExpectedOut, v.Local.fPercentage)
+						'Ger the Allocation from Pound In
+						f.Intrinsic.Math.Mult(v.Local.fPoundIn, v.Local.fPercentage, v.Local.fAllocation)
+						f.Intrinsic.Math.Add(v.Local.fPercAlloc, v.Local.fPercentage, v.Local.fPercAlloc)
+						'Optional, round up.
+						f.Intrinsic.Math.Floor(v.Local.fAllocation, v.Local.fAllocation)
+						'Set Value
+						'check if we are  in the last cay
+						f.Intrinsic.Control.If(v.Local.iCnt2,=, v.DataView.tmpDT!tmpDV.RowCount--)
+							f.Data.DataView.SetValue("tmpDT", "tmpDV", v.Local.iCnt2, "qty_PoundIn", v.Local.fRemainder)
+						f.Intrinsic.Control.Else
+							f.Data.DataView.SetValue("tmpDT", "tmpDV", v.Local.iCnt2, "qty_PoundIn", v.Local.fAllocation)
+						f.Intrinsic.Control.EndIf
+						'Substract from Remainder.
+						f.Intrinsic.Math.Sub(v.Local.fRemainder, v.Local.fAllocation, v.Local.fRemainder)
+						f.Intrinsic.Control.If(v.Local.fRemainder, <, 0)
+							v.Local.fRemainder.Set(0)
+						f.Intrinsic.Control.EndIf
+					f.Intrinsic.Control.Next(v.Local.iCnt2)
+					f.Data.Datatable.AcceptChanges("tmpDT")
+				f.Intrinsic.Control.EndIf
+			f.Intrinsic.Control.EndIf
+		f.Intrinsic.Control.EndIf
+	f.Intrinsic.Control.Next(v.Local.iCnt)
+	f.Data.DataView.Close("tmpDT", "tmpDV")
+		
+
+	
+	f.ODBC.Connection!con.Close
+	
+	'Get Chem Percentage
+	f.Data.DataTable.AddColumn("tmpDT", "ChemicPercent", "Float")
+	f.Data.DataTable.AddColumn("tmpDT", "ChemicPercentCost", "Float")
+	f.Intrinsic.Control.For(v.Local.iCnt, 0, v.DataTable.tmpDT.RowCount--, 1)
+		v.Local.fWeightDiff.Set(v.DataTable.tmpDT(v.Local.iCnt).WeightDiff!FieldVal)
+		v.Local.fPoundIn.Set(v.DataTable.tmpDT(v.Local.iCnt).PoundIn!FieldVal)
+		
+		f.Intrinsic.Control.If(v.DataTable.tmpDT(v.Local.iCnt).Soc!FieldValTrim, =, "C")
+			v.Local.fPoundIn.Set(0)
+		f.Intrinsic.Control.EndIf
+		
+		f.Intrinsic.Control.If(v.DataTable.tmpDT(v.Local.iCnt).Materials!FieldValTrim, =, "Basalt")
+			v.Local.fPoundIn.Set(0)
+		f.Intrinsic.Control.EndIf
+		
+		f.Intrinsic.Control.If(v.Local.fPoundIn, <>, 0)
+			f.Intrinsic.Math.Div(v.Local.fWeightDiff, v.Local.fPoundIn, v.Local.fPoundIn)
+		f.Intrinsic.Control.EndIf
+		
+		f.Intrinsic.Math.Add(v.Local.fPoundIn, 1, v.Local.fWeightDiff)
+'		'Get Char
+'		f.Intrinsic.String.Left(v.DataTable.tmpDT(v.Local.iCnt).Comp_Part!FieldValTrim, 2, v.Local.sChar)
+		f.Intrinsic.Control.If(v.Local.fWeightDiff, =, 0)
+			v.Local.fWeightDiff.Set(1)
+		f.Intrinsic.Control.EndIf
+		
+		f.Data.Datatable.SetValue("tmpDT", v.Local.iCnt, "ChemicPercent", v.Local.fPoundIn, "ChemicPercentCost", v.Local.fWeightDiff)
+	f.Intrinsic.Control.Next(v.Local.iCnt)
+	'Day
+	f.Data.Datatable.AddColumn("tmpDT", "DayString", "String")
+	f.Data.Datatable.SetValueFormat("tmpDT", -1, "prodDate", "DayString", "ddd")
+	'Fixed Costs.
+	f.Data.Datatable.AddColumn("tmpDT", "FixedCosts", "Float")
+	'Fixed Costs dict
+	f.Data.Dictionary.Create("fcDict")
+	f.Data.Dictionary.AddItem("fcDict", "Sat", v.DataTable.costsDT(0).FCWE!FieldVal)
+	f.Data.Dictionary.AddItem("fcDict", "Sun", v.DataTable.costsDT(0).FCWE!FieldVal)
+	f.Data.Dictionary.SetDefaultReturn("fcDict", v.DataTable.costsDT(0).FCWD!FieldVal)
+	'Get new table for totals.
+	f.Data.DataView.Create("tmpDT", "tmpDV", 22)
+	f.Data.DataView.ToDataTableDistinct("tmpDT", "tmpDV", "tmptotalsDT", "prodDate*!*DayString")
+	f.Data.DataView.Close("tmpDT", "tmpDV")
+	'Add Fixed Costs to Totals.
+	f.Data.Datatable.AddColumn("tmptotalsDT", "FixedCosts", "Float")
+	f.Data.Datatable.FillFromDictionary("tmptotalsDT", "fcDict", "DayString", "FixedCosts")
+	f.Data.Dictionary.Close("fcDict")
+	'Merge
+	f.Data.Datatable.DeleteRow("displayDT")
+	f.Data.Datatable.AcceptChanges("displayDT")
+	f.Data.Datatable.Merge("tmpDT", "displayDT", false, 2)
+	f.Data.Datatable.AcceptChanges("displayDT")
+	f.Data.Datatable.SetValueFormat("displayDT", -1, "Gross_Sales", "Gross_Sales_F", "")
+	f.Data.Datatable.SetValueFormat("displayDT", -1, "JobValueAdded", "JobValueAdded_F", "")
+	f.Data.Datatable.SetValueFormat("displayDT", -1, "RM_CostDsp", "RM_Cost", "")
+	f.Data.Datatable.SetValueFormat("displayDT", -1, "FR_ChemicalDsp", "FR_Chemical", "")
+	f.Data.Datatable.SetValueFormat("displayDT", -1, "DyeStuffDsp", "DyeStuff", "")
+	f.Data.Datatable.SetValueFormat("displayDT", -1, "BleachChemDsp", "BleachChem", "")
+	'Close DTs
+	'f.Data.Datatable.Close("partDT")
+	f.Data.Datatable.Close("frDT")
+	f.Data.Datatable.Close("dsDT")
+	f.Data.Datatable.Close("rmDT")
+	f.Data.Datatable.Close("chDT")
+	
+	f.Data.Datatable.Close("compDT")
+	f.Data.Datatable.Close("cmpDT")
+	'f.Data.Datatable.Close("costDT")
+	f.Data.Datatable.Close("fgDT")
+	f.Data.Datatable.Close("tmpDT")
+	'Compute Columns:
+	f.Data.Datatable.AddColumn("tmptotalsDT", "Job", "String", "Totals")
+	f.Data.Datatable.AddColumn("tmptotalsDT", "PoundIn", "Float", 0)
+	f.Data.Datatable.AddColumn("tmptotalsDT", "FinishedPounds", "Float", 0)
+	f.Data.Datatable.AddColumn("tmptotalsDT", "InvoiceWeight", "Float", 0)
+	f.Data.Datatable.AddExpressionColumn("tmptotalsDT", "WeightDiff", "Float", "FinishedPounds - PoundIn")
+	f.Data.Datatable.AddColumn("tmptotalsDT", "JobValueAdded_F", "Float", 0)
+	f.Data.Datatable.AddExpressionColumn("tmptotalsDT", "Situation", "Float", "JobValueAdded_F - FixedCosts")
+	f.Data.Datatable.AddColumn("tmptotalsDT", "Gross_Sales_F", "Float")
+	f.Data.Datatable.AddColumn("tmptotalsDT", "RM_Cost", "Float")
+	f.Data.Datatable.AddColumn("tmptotalsDT", "FR_Chemical", "Float")
+	f.Data.Datatable.AddColumn("tmptotalsDT", "DyeStuff", "Float")
+	f.Data.Datatable.AddColumn("tmptotalsDT", "BleachChem", "Float")
+	'Loop through different production days
+	f.Intrinsic.Control.For(v.Local.iCnt, 0, v.Datatable.tmpTotalsDT.RowCount--, 1)
+		'Create Filter
+		f.Intrinsic.String.Build("prodDate = '{0}'", v.DataTable.tmpTotalsDT(v.Local.iCnt).prodDate!FieldVal, v.Local.sFilter)
+		'Compute 
+		'PoundIn
+		f.Data.Datatable.Compute("displayDT", "sum(PoundIn)", v.Local.sFilter, v.Local.fTmp)
+		f.Data.Datatable.SetValue("tmptotalsDT", v.Local.iCnt, "PoundIn", v.Local.fTmp)
+		'FinishedPounds
+		f.Data.Datatable.Compute("displayDT", "sum(FinishedPounds)", v.Local.sFilter, v.Local.fTmp)
+		f.Data.Datatable.SetValue("tmptotalsDT", v.Local.iCnt, "FinishedPounds", v.Local.fTmp)
+		f.Data.Datatable.SetValue("tmptotalsDT", v.Local.iCnt, "InvoiceWeight", v.Local.fTmp)
+		'JobValueAdded
+		f.Data.Datatable.Compute("displayDT", "sum(JobValueAdded)", v.Local.sFilter, v.Local.fTmp)
+		f.Data.Datatable.SetValue("tmptotalsDT", v.Local.iCnt, "JobValueAdded_F", v.Local.fTmp)
+		'Gross_Sales
+		f.Data.Datatable.Compute("displayDT", "sum(Gross_Sales)", v.Local.sFilter, v.Local.fTmp)
+		'f.Data.Datatable.SetValue("tmptotalsDT", v.Local.iCnt, "Gross_Sales", v.Local.fTmp)
+		f.Data.Datatable.SetValue("tmptotalsDT", v.Local.iCnt, "Gross_Sales_F", v.Local.fTmp)
+		'RM_COST
+		f.Data.Datatable.Compute("displayDT", "sum(RM_CostDsp)", v.Local.sFilter, v.Local.fTmp)
+		f.Data.Datatable.SetValue("tmptotalsDT", v.Local.iCnt, "RM_Cost", v.Local.fTmp)
+		'FR_Chemical
+		f.Data.Datatable.Compute("displayDT", "sum(FR_ChemicalDsp)", v.Local.sFilter, v.Local.fTmp)
+		f.Data.Datatable.SetValue("tmptotalsDT", v.Local.iCnt, "FR_Chemical", v.Local.fTmp)
+		'DyeStuff
+		f.Data.Datatable.Compute("displayDT", "sum(DyeStuffDsp)", v.Local.sFilter, v.Local.fTmp)
+		f.Data.Datatable.SetValue("tmptotalsDT", v.Local.iCnt, "DyeStuff", v.Local.fTmp)
+		'BleachChem
+		f.Data.Datatable.Compute("displayDT", "sum(BleachChemDsp)", v.Local.sFilter, v.Local.fTmp)
+		f.Data.Datatable.SetValue("tmptotalsDT", v.Local.iCnt, "BleachChem", v.Local.fTmp)
+	f.Intrinsic.Control.Next(v.Local.iCnt)
+	'Totals
+	f.Data.Datatable.AcceptChanges("displayDT")
+	f.Data.Datatable.Merge("tmptotalsDT", "displayDT", false, 2)
+	f.Data.Datatable.AcceptChanges("displayDT")
+	f.Data.Datatable.Close("tmptotalsDT")
+f.Intrinsic.Control.Catch
+	f.Intrinsic.Control.CallSub(ErrorMsg, CurrentSub, v.Ambient.CurrentSubroutine)
+f.Intrinsic.Control.EndTry
+Program.Sub.cmdRefresh_Click.End
+
+Program.Sub.ErrorMsg.Start
+v.Local.sError.Declare
+
+
+
+'Generic Error message.
+f.Intrinsic.String.Build("Project ProjectName.g2u {0}{0}Subroutine: {1}{0}Error: {2} with Description: {3}", v.Ambient.NewLine, v.Args.CurrentSub, v.Ambient.ErrorNumber, v.Ambient.ErrorDescription, v.Local.sError)
+f.Intrinsic.UI.Msgbox(v.Local.sError)
+Program.Sub.ErrorMsg.End
+
+Program.Sub.Serialize.Start
+v.Local.sSerialize.Declare
+f.Intrinsic.Control.Try
+
+f.Intrinsic.Control.If(v.DataTable.uploadDT.Exists, =, False)
+	f.Intrinsic.Control.ExitSub
+f.Intrinsic.Control.EndIf
+
+gui.Form.GsGcDisplay.Serialize("displayGV", v.Local.sSerialize)
+f.Global.Registry.AddValue(v.Caller.User, v.Caller.CompanyCode, "displayGV", 6539, 1000, False, "Serialize", False, 0, -999.0, 1/1/1980, 12:00:00 AM, v.Local.sSerialize)
+	
+f.Intrinsic.Control.Catch
+	f.Intrinsic.Control.CallSub(ErrorMsg, CurrentSub, v.Ambient.CurrentSubroutine)
+f.Intrinsic.Control.EndTry
+Program.Sub.Serialize.End
+
+Program.Sub.Deserialize.Start
+v.Local.sSerialize.Declare
+f.Intrinsic.Control.Try
+	f.Global.Registry.ReadValue(v.Caller.User, v.Caller.CompanyCode, "displayGV", 6539, 0, 5, "", v.Local.sSerialize)
+	f.Intrinsic.Control.If(v.Local.sSerialize, <>, "")
+		f.ODBC.Connection!common.OpenCommonConnection
+			f.ODBC.Connection!common.Execute("delete from GS_REGISTRY where REG_ID = '6539'")
+		f.ODBC.Connection!common.Close
+	f.Intrinsic.Control.EndIf
+	
+	f.Global.Registry.ReadValue(v.Caller.User, v.Caller.CompanyCode, "displayGV", "6539", 1000, 6, "", v.Local.sSerialize)
+	f.Intrinsic.Control.If(v.Local.sSerialize.Trim, <>, "")
+		gui.Form.GsGcDisplay.Deserialize(v.Local.sSerialize)
+	f.Intrinsic.Control.EndIf
+f.Intrinsic.Control.Catch
+	f.Intrinsic.Control.CallSub(ErrorMsg, CurrentSub, v.Ambient.CurrentSubroutine)
+f.Intrinsic.Control.EndTry
+Program.Sub.Deserialize.End
+
+Program.Sub.Form_UnLoad.Start
+f.Intrinsic.Control.CallSub(Serialize)
+f.Intrinsic.Control.End
+Program.Sub.Form_UnLoad.End
+
+Program.Sub.Comments.Start
+${$5$}$3.0.0.0$}$1
+${$6$}$aanazco$}$20220203182249535$}$7aQAV3Tor/tR9bkuakHbuzQlHVuXCGOzRi0nYnd7jNbZ2FBC2dOnjv2xiHX65Bg70bblFK721+k=
+Program.Sub.Comments.End
